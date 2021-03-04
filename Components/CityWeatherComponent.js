@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import RenderArrayMap from "./RenderArrayMap";
 import RenderWeatherIcons from "./RenderWeatherIcons";
 
-const CityWeatherComponent = ({loadedWeather, weather }) => {
+const CityWeatherComponent = ({ loadedWeather, weather }) => {
   const {
     container,
     cityNameStyle,
@@ -18,7 +18,6 @@ const CityWeatherComponent = ({loadedWeather, weather }) => {
       </View>
     );
   } else {
-    const isDay = weather.current.is_day === "no" ? false : true;
     return (
       <View style={container}>
         <Text style={cityNameStyle}>{weather.location.name}</Text>
@@ -29,7 +28,7 @@ const CityWeatherComponent = ({loadedWeather, weather }) => {
           <RenderArrayMap contentArray={weather.current.weather_descriptions} />
         </View>
         <RenderWeatherIcons
-          isDay={isDay}
+          isDay={weather.current.is_day === "no" ? false : true}
           weatherIcons={weather.current.weather_icons}
         />
       </View>
