@@ -20,6 +20,9 @@ const HomeScreen = () => {
   const optionsUrl = "current?access_key=" + apiKey + "&query=" + citySearch;
 
   //TODO : Créer un component d'animation de loading
+  //TODO : Améliorer le fonctionnement de la SearchBar (proposition des villes quand on écrit, etc)
+  //TODO : Rendre le truc + design
+  //TODO : Checker si tous les imports sont ok
 
   const searchWeather = () => {
     setLoadedWeather(false);

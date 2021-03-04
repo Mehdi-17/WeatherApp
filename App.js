@@ -2,14 +2,13 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
-import { View, Text } from "react-native";
 import HomeScreen from "./screens/HomeScreen";
 import { appBackgroundColor } from "./utils/constants";
+import LoaderAnimation from "./Components/LoaderAnimation";
 
 const { Navigator, Screen } = createStackNavigator();
 
 const App = () => {
-  
   const [loadedFont] = useFonts({
     MontserratBlack: require("./assets/fonts/montserrat/Montserrat-Black.ttf"),
     MontserratRegular: require("./assets/fonts/montserrat/Montserrat-Regular.ttf"),
@@ -18,11 +17,7 @@ const App = () => {
   });
 
   if (!loadedFont) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <LoaderAnimation />;
   } else {
     return (
       <NavigationContainer>
