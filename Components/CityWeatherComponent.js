@@ -12,6 +12,8 @@ const CityWeatherComponent = ({ loadedWeather, weather }) => {
     viewConditionsStyle,
   } = styles;
 
+  //TODO: régler le bug du weather.location.name
+
   if (!loadedWeather) {
     return (
         <LoaderAnimation />
