@@ -23,8 +23,12 @@ const HomeScreen = () => {
   const [loadedWeather, setLoadedWeather] = useState(false);
   const [weather, setWeather] = useState();
 
-  const [loadedAutoComplete, setLoadedAutoComplete] = useState(false);
+  const [loadedJsonFile, setLoadedJsonFile] = useState(false);
+  //le tableau mis à jour en fonction de la search bar
   const [autoCompleteList, setAutoCompleteList] = useState([]);
+
+  // le tableau de base qui ne bouge pas
+  let cities;
 
   const baseUrlWeather = 'http://api.weatherstack.com/';
   const optionsUrl =
@@ -34,8 +38,10 @@ const HomeScreen = () => {
     citySearchForWeather;
 
   const autoCompleteDisabled = true;
-  // J AI DESACTIVE LAUTO COMPLETE AVEC CETTE VARIABLE = > autoCompleteDisabled
-  //TODO : Finir l'auto complete de a search bar : https://medium.com/verclaire-nine/build-a-custom-autocomplete-search-bar-with-react-hooks-6e713ca2c5e0
+  //TODO : TROUVER UN MOYEN POUR A SEARCH BAR AUTOCOMPLETE? CAR LE FICHIER JSON EST BCP TROP LOURD VOIR POUR AVOIR UN JSON QUE DES VILLES DE FRANCE ...
+  //... ET LES PRINCIPALES VILES DU MONDE
+  // https://public.opendatasoft.com/explore/dataset/geonames-all-cities-with-a-population-1000/api/?disjunctive.country&location=2,0.91008,0.12126&basemap=jawg.streets
+  //TODO : Finir l'auto complete de la search bar : https://medium.com/verclaire-nine/build-a-custom-autocomplete-search-bar-with-react-hooks-6e713ca2c5e0
   //TODO : trouver une autre api de ville, avec l'info nom ville, pays, population ville. Si je trouve pas, faire ma propre api et database
   //TODO : Rendre le truc + design
   //TODO : Checker si tous les imports sont ok
@@ -49,53 +55,45 @@ const HomeScreen = () => {
       .finally(() => setLoadedWeather(true));
   };
 
+  const loadAllCities = async () => {
+    setLoadedJsonFile(false);
+    console.log('chargement...')
+    cities = require('../assets/json/cities.json');
+    console.log('Cities :', cities);
+    setLoadedJsonFile(true);
+  };
+
   useEffect(() => {
     searchWeather();
+    loadAllCities();
   }, []);
 
-  const searchBarAutoComplete = async (namePrefix) => {
-    if (autoCompleteDisabled !== true) {
-      setLoadedAutoComplete(false);
-      const customHeaders = new Headers({
-        'x-rapidapi-key': REACT_NATIVE_API_KEY_CITY,
-        'x-rapidapi-host': 'wft-geo-db.p.rapidapi.com',
-      });
+  const updateAutoComplete = (namePrefix) => {
+    setCitySearchForWeather(namePrefix);
 
-      if (namePrefix !== '') {
-        const response = await fetch(
-          'https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=' +
-            namePrefix +
-            '&languageCode=FR',
-          {
-            method: 'GET',
-            headers: customHeaders,
-          }
-        ).catch((error) => console.error(error));
-
-        const jsonData = await response.json();
-        setAutoCompleteList(jsonData.data);
-        setLoadedAutoComplete(true);
-      }
+    let search = query.toLowerCase();
+    if (hero.name.startsWith(search, 14)) {
+      return formatNames(hero);
+    } else {
+      heroes.splice(heroes.indexOf(hero), 1);
+      return null;
     }
   };
 
   const displayFlatListCity = () => {
-    console.log('loaded autocomplete', loadedAutoComplete);
-    if (loadedAutoComplete === true) {
-      return (
-        <FlatList
-          data={autoCompleteList}
-          keyExtractor={(i) => i.id.toString()}
-          extraData={autoCompleteList}
-          style={flatListStyle}
-          renderItem={({ item }) => (
-            <Text onPress={() => setCitySearchForWeather(item.name)}>
-              {item.name}, {item.country}
-            </Text>
-          )}
-        />
-      );
-    }
+    return (
+      <FlatList
+        data={cities}
+        keyExtractor={(i) => i.id.toString()}
+        extraData={autoCompleteList}
+        style={flatListStyle}
+        renderItem={({ item }) => (
+          <Text onPress={() => setCitySearchForWeather(item.name)}>
+            {item.name}, {item.country}
+          </Text>
+        )}
+      />
+    );
   };
 
   return (
@@ -107,13 +105,11 @@ const HomeScreen = () => {
         searchIcon={{ size: 24 }}
         placeholder="Entrer la ville ici..."
         onChangeText={(value) => {
-          setCitySearchForWeather(value);
-          searchBarAutoComplete(value);
+          updateAutoComplete(value);
         }}
         onSubmitEditing={() => searchWeather()}
         onClear={() => {
           setCitySearchForWeather('');
-          setAutoCompleteList([]);
         }}
         value={citySearchForWeather}
       />
