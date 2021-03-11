@@ -32,7 +32,6 @@ const HomeScreen = () => {
   }, []);
 
   const searchWeather = async (value) => {
-    console.log('value => ', value);
     setLoadedWeather(false);
     await fetch(baseUrlWeather + optionsUrl + value)
       .then((response) => response.json())
