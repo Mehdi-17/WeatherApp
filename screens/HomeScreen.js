@@ -11,9 +11,13 @@ import {
 } from '@env';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
+// TODO: dans l'appel à l'api, rajouter un paramètre optionnel pays pour pas qu'on ai de résultats random
+// Ex : si je cherche Venise et que je clique sur "Venise, Italie" dans l'auto complete google ...
+// ... ca va me renvoyer le Venise en France qui est en Franche-Comte
+
 const HomeScreen = () => {
-  const { container, imgStyle, contentContainer, searchBarContainer } = styles;
   const baseCity = 'Tours';
+  const { container, imgStyle, contentContainer, searchBarContainer } = styles;
   const [city, setCity] = useState('');
 
   const [loadedWeather, setLoadedWeather] = useState(false);
@@ -23,8 +27,9 @@ const HomeScreen = () => {
   const optionsUrl =
     'current?access_key=' + REACT_NATIVE_API_KEY_WEATHER + '&query=';
 
-  //TODO : Rendre le truc + design
-  //TODO : Refacto pour avoir bien des components séparés
+  useEffect(() => {
+    city !== '' ? searchWeather(city) : searchWeather(baseCity);
+  }, []);
 
   const searchWeather = async (value) => {
     console.log('value => ', value);
@@ -36,15 +41,11 @@ const HomeScreen = () => {
       .finally(() => setLoadedWeather(true));
   };
 
-  useEffect(() => {
-    city !== '' ? searchWeather(city) : searchWeather(baseCity);
-  }, []);
-
   return (
     <View style={container}>
       <View style={searchBarContainer}>
         <GooglePlacesAutocomplete
-        ref={(instance) => this.googlePlacesRef = instance}
+          ref={(instance) => (this.googlePlacesRef = instance)}
           placeholder="Entrer la ville ici..."
           onPress={(data) => {
             searchWeather(data.structured_formatting.main_text.toString());
@@ -57,11 +58,11 @@ const HomeScreen = () => {
           }}
           styles={autoCompleteStyles}
           enablePoweredByContainer={false}
-          textInputProps={{clearButtonMode:'while-editing'}}
+          textInputProps={{ clearButtonMode: 'while-editing' }}
           renderRightButton={() => (
             <TouchableOpacity
               onPress={() => {
-                this.googlePlacesRef.setAddressText("");
+                this.googlePlacesRef.setAddressText('');
               }}
             >
               <Ionicons name={`${prefix}-close-sharp`} size={44} />
@@ -69,6 +70,7 @@ const HomeScreen = () => {
           )}
         />
       </View>
+
       <View style={contentContainer}>
         <Image style={imgStyle} source={WeatherIllustration} />
 
@@ -116,8 +118,8 @@ const autoCompleteStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 2,
   },
-  textInput:{
-    height:44
-  }
+  textInput: {
+    height: 44,
+  },
 });
 export default HomeScreen;
