@@ -8,6 +8,9 @@ import LoaderAnimation from "./Components/LoaderAnimation";
 
 const { Navigator, Screen } = createStackNavigator();
 
+// ICI ON UTILISE UN STACK NAVIGATOR CAR PLUSIEURS SCREENS SONT PREVU PLUTARD POUR L'APPLICATION
+// ILS ARRIVERONT PEUT ETRE JAMAIS MAIS DANS LE CAS OU J'AI LE TEMPS D'AGGRANDIR L'APP, JE PREVOIS.
+
 const App = () => {
   const [loadedFont] = useFonts({
     MontserratBlack: require("./assets/fonts/montserrat/Montserrat-Black.ttf"),
